@@ -23,6 +23,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    impermanence.url = "github:nix-community/impermanence";
+
     darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,7 +51,9 @@
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       inputs.zig.overlays.default
-
+      inputs.nix-vscode-extensions.overlays.default
+      inputs.nur.overlays.default
+     
       (final: prev: rec {
         # gh CLI on stable has bugs.
         gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
@@ -59,6 +63,7 @@
     mkSystem = import ./lib/mksystem.nix {
       inherit overlays nixpkgs inputs;
     };
+
   in {
     nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" rec {
       system = "x86_64-linux";

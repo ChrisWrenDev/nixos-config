@@ -14,7 +14,7 @@
     };
   };
 
-  users.users.${username}.extraGroups = ["libvirtd"];
+  users.users.chriswrendev.extraGroups = ["libvirtd"];
 
   environment.systemPackages = with pkgs; [
     virt-manager

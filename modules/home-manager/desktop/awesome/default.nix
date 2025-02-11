@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{pkgs, ...}: 
+{
   home.file = {
     ".config/awesome" = {
       recursive = true;

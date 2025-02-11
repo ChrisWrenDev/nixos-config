@@ -1,17 +1,23 @@
+# nix configuration
+{ isWSL, inputs, username, ... }:
+
+# home manager
+{ config, lib, pkgs, ... }:
+
+let
+  firefox = import ../../modules/home-manager/firefox { inherit username pkgs; };
+in
+
 {
-  pkgs,
-  username,
-  ...
-}: {
   imports = [
+    firefox
     ../../modules/home-manager/desktop/awesome
     ../../modules/home-manager/desktop/hyprland
     ../../modules/home-manager/desktop/waybar
     ../../modules/home-manager/desktop/rofi
 
     ../../modules/home-manager/picom
-    ../../modules/home-manager/floorp
-    ../../modules/home-manager/firefox
+    # ../../modules/home-manager/firefox
 
     ../../modules/home-manager/alacritty
     ../../modules/home-manager/wezterm
@@ -62,27 +68,27 @@
     tor-browser
   ];
 
-  home.persistence."/persist/home/${username}" = {
-    directories = [
-      "Downloads"
-      "Music"
-      "Wallpapers"
-      "Documents"
-      "Videos"
-      "Projects"
-      ".mozilla"
-      ".ssh"
-      ".config/copyq"
-      ".local/share/nvim"
-      ".local/share/zoxide"
-      ".local/share/Smart\ Code\ ltd"
-      ".local/state/lazygit"
-    ];
-    files = [
-      ".zsh_history"
-    ];
-    allowOther = true;
-  };
+  #home.persistence."/persist/home/${user}" = {
+  #  directories = [
+   #   "Downloads"
+    #  "Music"
+     # "Wallpapers"
+     # "Documents"
+    #  "Videos"
+     # "Projects"
+     # ".mozilla"
+     # ".ssh"
+     # ".config/copyq"
+     # ".local/share/nvim"
+     # ".local/share/zoxide"
+     # ".local/share/Smart\ Code\ ltd"
+     # ".local/state/lazygit"
+    #];
+   # files = [
+   #   ".zsh_history"
+   # ];
+   # allowOther = true;
+  #};
 
   home.stateVersion = "24.11";
 }

@@ -1,6 +1,6 @@
-{...}:
+{ ... }:
 {  programs.alacritty = {
-    enable = !isWSL;
+    enable = true;
 
     settings = {
       env.TERM = "xterm-256color";

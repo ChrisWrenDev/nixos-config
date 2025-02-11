@@ -1,5 +1,4 @@
 {
-  username,
   pkgs,
   ...
 }: {
@@ -10,5 +9,5 @@
 
   environment.systemPackages = with pkgs; [lazydocker];
 
-  users.users.${username}.extraGroups = ["docker"];
+  users.users.chriswrendev.extraGroups = ["docker"];
 }

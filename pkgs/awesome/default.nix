@@ -14,7 +14,7 @@ in
     '';
 
     meta = with lib; {
-      description = "awesome-wm config";
+      description = "awesome wm config";
       homepage = "https://chriswren.dev";
       platforms = platforms.all;
       license = licenses.gpl3;

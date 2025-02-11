@@ -1,9 +1,8 @@
 {
   pkgs,
-  username,
   ...
 }: {
-  home.file.".mozilla/firefox/${username}/chrome".source = pkgs.firefox-mod-blur;
+  home.file.".mozilla/firefox/chriswrendev/chrome".source = pkgs.firefox-mod-blur;
 
   programs.firefox = {
     enable = true;
@@ -34,7 +33,7 @@
     };
 
     profiles = {
-      ${username} = {
+      chriswrendev = {
         id = 0;
         name = "Chris";
         search = {
