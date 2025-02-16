@@ -1,19 +1,19 @@
-{ config, pkgs, currentSystemUser, ... }:
-
 {
-  imports =
-    [
-      ./hardware.nix
-      ../shared
-      ../../modules/nixos/desktop
-      ../../modules/nixos/desktop/awesome
-      ../../modules/nixos/desktop/hyprland
-      ../../modules/nixos/virtualisation
-    ];
+  config,
+  pkgs,
+  lib,
+  currentSystemUser,
+  ...
+}: {
+  imports = [
+    ./hardware.nix
+    ../shared
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.configurationLimit = 3;
 
   networking.hostName = "surface-book-2"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -29,6 +29,13 @@
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+  services.xserver = {
+    xkb = {
+      layout = "gb";
+      variant = "";
+    };
+  };
+
   # Configure console keymap
   console.keyMap = "uk";
 
@@ -39,9 +46,12 @@
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
 
-  services = {
-    flatpak.enable = true;
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = true;
+  services.openssh.settings.PermitRootLogin = "no";
 
+  services = {
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -54,119 +64,45 @@
       # no need to redefine it in your config for now)
       #media-session.enable = true;
     };
-
-    xrdp = {
-      enable = true;
-      defaultWindowManager = true;
-      audio.enable = true;
-    };
-
-    # Enable the X11 windowing system.
-    # You can disable this if you're only using the Wayland session.
-    xserver = {
-      enable = true;
-      xkb = {
-        layout = "gb";
-        variant = "";
-      };
-    };
   };
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
   fonts.packages = with pkgs; [
-    nerd-fonts-fira-code
-    nerd-fonts-jetbrains-mono
+    (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
-  programs = {
-    fuse.userAllowOther = true;
-    xfconf.enable = true;
-    file-roller.enable = true;
-    thunar = {
-      enable = true;
-      plugins = with pkgs.xfce; [thuar-archive-plugin thunar-volman];
-    };
-    nix-ld = {
-      enable = true;
-      package = pkgs.nix-ld-rs;
-    };
-  };
+  programs.zsh.enable = true;
+  programs.firefox.enable = true;
 
   nixpkgs.overlays = import ../../lib/overlays.nix;
-  
-    # overlays = [
-    # outputs.overlays.additions
-    # outputs.overlays.modifications
-    # outputs.overlays.stable-packages
-    # outputs.overlays.nur
-    # outputs.overlays.nix-vscode-extensions
-    # ]; 
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.joypixels.acceptLicence = true;
 
-  
-  nix.package = pkgs.lix;
-
-  nix.settings = {
-    experimental-features = "nix-command flakes";
-    auto-optimise-store = true;
-    trusted-users = ["${currentSystemUser}"];
-    warn-dirty = true;   
-    substituters = [
-      "https://cache.nixos.org?priority=10"
-      "https://anyrun.cachix.org"
-      "https://helix.cachix.org"
-      "https://hyprland.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://yazi.cachix.org"
-    ];
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
-      "helix.cachix.org-1:ejp9KQpR1FBI2onstMQ34yogDm4OgU2ru6lIwPvuCVs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
-    ];
-    security.sudo.wheelNeedsPassword = false;
-    programs = {
-      zsh.enable = true;
-      nh = {
-        enable = true;
-        clean.enable = true;
-        clean.extraArgs = "--keep-since 5d --keep 5";
-        flake = "home/${currentSystemUser}/nixos-config";
-      };
-    };
+  nix = {
+    package = pkgs.nixVersions.latest;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      keep-outputs = true
+      keep-derivations = true
+    '';
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  security.sudo.wheelNeedsPassword = false;
 
-  # List services that you want to enable:
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    google-chrome
+    firefox
+    killall
+    xclip
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+    gnupg
+  pinentry
+  pinentry-curses
+  ];
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  # system.stateVersion = "24.11"; # Did you read the comment?
-
+  system.stateVersion = "24.11";
 }

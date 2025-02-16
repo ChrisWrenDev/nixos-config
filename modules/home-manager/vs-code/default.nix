@@ -43,7 +43,7 @@
 
     extensions =
       (with pkgs.vscode-extensions; [
-        wakatime.vscode-wakatime
+        # wakatime.vscode-wakatime
         ms-dotnettools.csharp
         naumovs.color-highlight
         ms-vscode-remote.remote-containers

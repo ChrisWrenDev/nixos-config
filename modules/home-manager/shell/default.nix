@@ -1,12 +1,22 @@
 {pkgs, ...}: {
   programs = {
-    bat.enable = true;
-    lazygit.enable = true;
+    # Navigation / Search
     zoxide = {
       enable = true;
       options = ["--cmd cd"];
     };
     ripgrep.enable = true;
+    fzf.enable = true;
+    fd.enable = true;
+
+    # File Management / Utilities
+    yazi = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    bat.enable = true;
+
     btop = {
       enable = true;
       settings = {
@@ -15,55 +25,36 @@
         presets = "cpu:0:default mem:0:default net:0:default";
       };
     };
-    yazi = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    go.enable = true;
-    fzf.enable = true;
-    # zellij.enable = true;
   };
 
   home.packages = with pkgs; [
+    # File Management
     fd
-    tldr
-    duf
-    service-wrapper
     lsd
-    nitch
-    ranger
-    wget
-    portal
-    bore-cli
     zip
     unzip
-    pciutils
-    gnumake
-    nvtopPackages.full
-    jq
-    atac
-    termshark
-    solc
+
+    # System Monitoring
+    duf
+    btop
+    htop
+    gdu
+
+    # Networking
+    wget
+    curl
+    xh
     dig
 
-    python312
-    python312Packages.pipx
+    # Data Processing
+    jq
+    yq
+    xsv
 
-    bun
-    nodejs
-    nodePackages.pnpm
-    nodePackages.yarn
+    tldr
 
-    rustup
-
-    nixpkgs-fmt
-    nix-output-monitor
-
-    hunspell
-    hunspellDicts.en_GB
-
-    air
-    templ
     ffmpeg
+
+    nitch
   ];
 }

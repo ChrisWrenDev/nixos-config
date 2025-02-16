@@ -1,42 +1,54 @@
-{...}:
-{
-    programs.tmux = {
+{pkgs, ...}: {
+  programs.tmux = {
     enable = true;
-    terminal = "xterm-256color";
-    shortcut = "l";
-    secureSocket = false;
-    mouse = true;
 
     extraConfig = "
-       set-option -sa terminal-overrides \",xterm*:Tc\"
-       set -g mouse on  
-       set-option -g status-position top
-       set-option -g allow-rename off
-       unbind r
-       bind r source-file ~/.config/tmux/tmux.conf
-
-       # remap prefix from C-b to C-Space
-       # unbind C-b
-       # set -g prefix C-Space
-       # bind C-Space send-prefix
-
-       # split panes using | and -
-       unbind '\"'
-       unbind %
-       bind | split-window -h
-       bind - split-window -v
-
-       # Start windows and panes at 1, not 0
-       set -g base-index 1
-       set -g pane-base-index 1
-       set-window-option -g pane-base-index 1
-       set-option -g renumber-windows on
-    
-       # switch panes using Alt-arrow without prefix
-       bind -n M-Left select-pane -L
-       bind -n M-Right select-pane -R
-       bind -n M-Up select-pane -U
-       bind -n M-Down select-pane -D
+      set -g default-terminal \"tmux-256color\"
+    set -ag terminal-overrides \",xterm-256color:RGB\"
+   
+    set -g prefix C-a
+    unbind C-b
+    bind-key C-a send-prefix
+  
+    unbind %
+    bind | split-window -h
+   
+   unbind '\"'
+   bind - split-window -v
+  
+   unbind r
+   bind r source-file ~/.tmux.conf
+  
+   bind j resize-pane -D 5
+ bind k resize-pane -U 5
+   bind l resize-pane -R 5
+   bind h resize-pane -L 5
+  
+   bind -r m resize-pane -Z
+  
+   set -g mouse on
+  
+   set-window-option -g mode-keys vi
+  
+   bind-key -T copy-mode-vi 'v' send -X begin-selection # start selecting text with \"v\"
+ bind-key -T copy-mode-vi 'y' send -X copy-selection # copy text with \"y\"
+  
+   unbind -T copy-mode-vi MouseDragEnd1Pane # don't exit copy mode when dragging with mouse
+  
+   # remove delay for exiting insert mode with ESC in Neovim
+   set -sg escape-time 10
+  
+   # tpm plugin
+   # set -g @plugin 'tmux-plugins/tpm'
       ";
+
+    plugins = with pkgs.tmuxPlugins; [
+      vim-tmux-navigator
+      resurrect
+      continuum
+      tokyo-night-tmux
+    ];
   };
+
+  # xdg.configFile."~/.tmux.conf".source = ./.tmux.conf;
 }
