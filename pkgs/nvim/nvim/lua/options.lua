@@ -1,7 +1,6 @@
-require("nvchad.options")
+require "nvchad.options"
 
-local opt = vim.opt
+-- add yours here!
 
-opt.relativenumber = true
-opt.scrolloff = 5
-opt.guifont = "FiraCode Nerd Font:h12"
+-- local o = vim.o
+-- o.cursorlineopt ='both' -- to enable cursorline!

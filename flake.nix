@@ -47,13 +47,17 @@
     zig.url = "github:mitchellh/zig-overlay";
   };
 
-  outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs: let
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    darwin,
+    ...
+  } @ inputs: let
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       inputs.zig.overlays.default
-      inputs.nix-vscode-extensions.overlays.default
-      inputs.nur.overlays.default
-     
+
       (final: prev: rec {
         # gh CLI on stable has bugs.
         gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
@@ -63,42 +67,41 @@
     mkSystem = import ./lib/mksystem.nix {
       inherit overlays nixpkgs inputs;
     };
-
   in {
     nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" rec {
       system = "x86_64-linux";
-      user   = "chriswrendev";
+      user = "chriswrendev";
     };
-    
+
     nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
       system = "aarch64-linux";
-      user   = "chriswrendev";
+      user = "chriswrendev";
     };
 
     nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" rec {
       system = "aarch64-linux";
-      user   = "chriswrendev";
+      user = "chriswrendev";
     };
 
     nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" rec {
       system = "aarch64-linux";
-      user   = "chriswrendev";
+      user = "chriswrendev";
     };
 
     nixosConfigurations.vm-intel = mkSystem "vm-intel" rec {
       system = "x86_64-linux";
-      user   = "chriswrendev";
+      user = "chriswrendev";
     };
 
     nixosConfigurations.wsl = mkSystem "wsl" {
       system = "x86_64-linux";
-      user   = "chriswrendev";
-      wsl    = true;
+      user = "chriswrendev";
+      wsl = true;
     };
 
     darwinConfigurations.macbook-pro-m1 = mkSystem "macbook-pro-m1" {
       system = "aarch64-darwin";
-      user   = "chriswrendev";
+      user = "chriswrendev";
       darwin = true;
     };
   };

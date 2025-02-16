@@ -1,11 +1,11 @@
-{...}:
-{
-    programs.git = {
+{...}: {
+  programs.git = {
     enable = true;
+    delta.enable = true;
     userName = "Chris Wren";
     userEmail = "chriswrendeveloper@gmail.com";
     signing = {
-      key = "~/.ssh/id_ed25519.pub";
+      key = "C20246199040601C";
       signByDefault = true;
     };
     aliases = {
@@ -23,4 +23,6 @@
       init.defaultBranch = "main";
     };
   };
+
+  programs.lazygit.enable = true;
 }

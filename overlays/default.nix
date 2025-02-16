@@ -4,5 +4,5 @@
 final: prev: {
   awesome-wm-config = final.callPackage ../pkgs/awesome {};
   nvim-config = final.callPackage ../pkgs/nvim {};
-  # firefox-mod-blur = final.callPackage ../pkgs/firefox-mod-blur {};
+  firefox-mod-blur = final.callPackage ../pkgs/firefox-mod-blur {};
 }
