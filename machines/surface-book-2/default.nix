@@ -38,6 +38,7 @@
 
   # Configure console keymap
   console.keyMap = "uk";
+  hardware.keyboard.qmk.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -45,6 +46,11 @@
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
+
+
+  # Enable bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;

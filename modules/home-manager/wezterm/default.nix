@@ -8,7 +8,7 @@
     local config = wezterm.config_builder()
    
     config.window_close_confirmation = 'NeverPrompt'
-    config.color_scheme = 'Poimandres'
+    config.color_scheme = 'Tokyo Night Moon'
    config.colors = {
       background = \"#0f0f0f\"
     }
