@@ -27,16 +27,22 @@
   networking.networkmanager.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = false; # Ensure SDDM uses X11
+  };
   services.desktopManager.plasma6.enable = true;
 
   services.xserver = {
+    enable = true;
     xkb = {
       layout = "gb";
       variant = "";
     };
+    displayManager.defaultSession = "plasma"; # Ensure X11 Plasma session
+    
   };
- 
+
   # Configure console keymap
   console.keyMap = "uk";
   hardware.keyboard.qmk.enable = true;

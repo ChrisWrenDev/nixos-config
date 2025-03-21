@@ -5,7 +5,10 @@
     vimAlias = true;
     withPython3 = true;
     withNodeJs = true;
-    extraPackages = with pkgs; [ gcc clang ];
+    extraPackages = with pkgs; [
+      gcc
+      clang
+    ];
   };
 
   home.file = {
@@ -16,6 +19,10 @@
   };
 
   home.packages = with pkgs; [
-    neovide
+    neovide 
+    gopls
+    zls
+    lua-language-server
+    typescript-language-server
   ];
 }
