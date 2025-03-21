@@ -27,6 +27,8 @@
     luarocks
 
     rustup
+    rustlings
+    lldb
 
     nixpkgs-fmt
     nix-output-monitor
