@@ -13,14 +13,22 @@
   # True if this is a WSL system.
   isWSL = wsl;
 
-  # True if Linux, which is a heuristic for not being Darwin.
-  isLinux = !darwin && !isWSL;
+  # True if Linux (WSL is still Linux).
+  isLinux = !darwin;
 
   # The config files for this system.
   machineConfig = ../machines/${name};
   userHMConfig = ../machines/${name}/home.nix;
 
-  # NixOS vs nix-darwin functionst
+  # Architecture-specific module (auto-imported based on system type).
+  # For NixOS: modules/nixos/{system}.nix  (e.g. modules/nixos/x86_64-linux.nix)
+  # For Darwin: modules/darwin/{system}.nix (e.g. modules/darwin/aarch64-darwin.nix)
+  archModule =
+    if darwin
+    then ../modules/darwin/${system}.nix
+    else ../modules/nixos/${system}.nix;
+
+  # NixOS vs nix-darwin functions
   systemFunc =
     if darwin
     then inputs.darwin.lib.darwinSystem
@@ -56,6 +64,10 @@ in
         else {}
       )
 
+      # Architecture-specific module (boot, nix settings, packages, etc.)
+      archModule
+
+      # Host-specific configuration (hostname, hardware, desktop choice)
       machineConfig
 
       home-manager.home-manager
@@ -63,12 +75,8 @@ in
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.backupFileExtension = "backup";
-        home-manager.users.${user} = import userHMConfig {
-          username = user;
-          isWSL = isWSL;
-          inputs = inputs;
-          pkgs = nixpkgs;
-        };
+        home-manager.extraSpecialArgs = {inherit inputs;};
+        home-manager.users.${user} = import userHMConfig;
       }
 
       # We expose some extra arguments so that our modules can parameterize

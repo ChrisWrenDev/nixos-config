@@ -1,12 +1,19 @@
-{...}: {
+{
+  config,
+  lib,
+  ...
+}: let
+  theme = config.theme.colorsHex;
+in {
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
 
     settings = {
-      format = "[░▒▓](#a3aed2)[ 󰊠 ](bg:#a3aed2 fg:#090c0c)[](bg:#769ff0 fg:#a3aed2)$directory[](fg:#769ff0 bg:#394260)$git_branch$git_status[](fg:#394260 bg:#212736)$nodejs$rust$golang$lua$zig[](fg:#212736 bg:#1d2230)$time[ ](fg:#1d2230)\n$character";
+      format = "[░▒▓](${theme.color8})[ 󰊠 ](bg:${theme.accent} fg:${theme.background})[ ](bg:${theme.color4} fg:${theme.accent})$directory[](fg:${theme.color4} bg:${theme.color5})$git_branch$git_status[](fg:${theme.color5} bg:${theme.color6})$nodejs$rust$golang$lua$zig[](fg:${theme.color6} bg:${theme.color7})$time[ ](fg:${theme.color7})\n$character";
+
       directory = {
-        style = "fg:#e3e5e5 bg:#769ff0";
+        style = "fg:${theme.foreground} bg:${theme.color4}";
         format = "[ $path ]($style)";
         read_only = " 󰌾";
         truncation_length = 3;
@@ -14,51 +21,51 @@
       };
 
       git_branch = {
-        symbol = "";
-        style = "bg:#394260";
-        format = "[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)";
+        symbol = "";
+        style = "bg:${theme.color5}";
+        format = "[[ $symbol $branch ](fg:${theme.color4} bg:${theme.color5})]($style)";
       };
 
       git_status = {
-        style = "bg:#394260";
-        format = "[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)";
+        style = "bg:${theme.color5}";
+        format = "[[($all_status$ahead_behind )](fg:${theme.color4} bg:${theme.color5})]($style)";
       };
 
       nodejs = {
-        symbol = "";
-        style = "bg:#212736";
-        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+        symbol = "";
+        style = "bg:${theme.color6}";
+        format = "[[ $symbol ($version) ](fg:${theme.color4} bg:${theme.color6})]($style)";
       };
 
       rust = {
         symbol = "🦀";
-        style = "bg:#212736";
-        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+        style = "bg:${theme.color6}";
+        format = "[[ $symbol ($version) ](fg:${theme.color4} bg:${theme.color6})]($style)";
       };
 
       golang = {
-        symbol = "";
-        style = "bg:#212736";
-        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+        symbol = "";
+        style = "bg:${theme.color6}";
+        format = "[[ $symbol ($version) ](fg:${theme.color4} bg:${theme.color6})]($style)";
       };
 
       lua = {
         symbol = "🌙";
-        style = "bg:#212736";
-        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+        style = "bg:${theme.color6}";
+        format = "[[ $symbol ($version) ](fg:${theme.color4} bg:${theme.color6})]($style)";
       };
 
       zig = {
         symbol = "↯";
-        style = "bg:#212736";
-        format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+        style = "bg:${theme.color6}";
+        format = "[[ $symbol ($version) ](fg:${theme.color4} bg:${theme.color6})]($style)";
       };
 
       time = {
         disabled = false;
-        time_format = "%R"; # Hour:Minute Format
-        style = "bg:#1d2230";
-        format = "[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)";
+        time_format = "%R";
+        style = "bg:${theme.color7}";
+        format = "[[  $time ](fg:${theme.foreground} bg:${theme.color7})]($style)";
       };
     };
   };

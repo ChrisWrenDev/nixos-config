@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Screenshot helper for Hyprland
+# Usage: screenshot [full|area|window]
+
+set -euo pipefail
+
+ACTION="${1:-area}"
+OUTPUT_DIR="${XDG_SCREENSHOTS_DIR:-$HOME/Pictures/Screenshots}"
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+FILENAME="$OUTPUT_DIR/screenshot_$TIMESTAMP.png"
+
+mkdir -p "$OUTPUT_DIR"
+
+case "$ACTION" in
+  full)
+    grim "$FILENAME"
+    wl-copy < "$FILENAME"
+    notify-send "Screenshot saved" "$FILENAME"
+    ;;
+  area)
+    grim -g "$(slurp)" "$FILENAME"
+    wl-copy < "$FILENAME"
+    notify-send "Screenshot saved" "$FILENAME"
+    ;;
+  window)
+    grim -g "$(hyprctl activewindow -j | jq -r '.at | .[] | join(",")') $(hyprctl activewindow -j | jq -r '.size | .[] | join(",")')" "$FILENAME"
+    wl-copy < "$FILENAME"
+    notify-send "Screenshot saved" "$FILENAME"
+    ;;
+  *)
+    echo "Usage: screenshot [full|area|window]"
+    exit 1
+    ;;
+esac

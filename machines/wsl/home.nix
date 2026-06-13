@@ -1,6 +1,0 @@
-{...}:
-{
-    import = [
-        ../shared/home.nix
-    ];
-}
