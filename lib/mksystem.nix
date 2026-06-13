@@ -41,6 +41,11 @@ in
   systemFunc rec {
     inherit system;
 
+    # specialArgs are passed to all module functions directly, without
+    # going through the module system. This avoids circular dependencies
+    # when inputs are referenced in imports lists.
+    specialArgs = {inherit inputs;};
+
     modules = [
       # Apply our overlays. Overlays are keyed by system type so we have
       # to go through and apply our system type. We do this first so
@@ -87,7 +92,6 @@ in
           currentSystemName = name;
           currentSystemUser = user;
           isWSL = isWSL;
-          inputs = inputs;
         };
       }
     ];
