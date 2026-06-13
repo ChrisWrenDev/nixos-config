@@ -119,4 +119,24 @@ vm/switch:
 # Build a WSL installer
 .PHONY: wsl
 wsl:
-	 nix build ".#nixosConfigurations.wsl.config.system.build.installer"
+	 nix build ".#nixosConfigurations.thinkpad-wsl.config.system.build.installer"
+
+# Evaluate all configurations without building or deploying.
+# Catches type errors, missing options, and module conflicts.
+# NOTE: macbook skipped on Linux — darwin configs can't be evaluated on Linux.
+NIX_FLAGS := --extra-experimental-features "nix-command flakes"
+.PHONY: check
+check:
+	@echo "=== Evaluating nixosConfigurations ==="
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.beelink-ser8.config.system.build.toplevel" --json > /dev/null && echo "  OK: beelink-ser8"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.surface-book-2.config.system.build.toplevel" --json > /dev/null && echo "  OK: surface-book-2"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.thinkpad-wsl.config.system.build.toplevel" --json > /dev/null && echo "  OK: thinkpad-wsl"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.vm-intel.config.system.build.toplevel" --json > /dev/null && echo "  OK: vm-intel"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.vm-aarch64.config.system.build.toplevel" --json > /dev/null && echo "  OK: vm-aarch64"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.vm-aarch64-prl.config.system.build.toplevel" --json > /dev/null && echo "  OK: vm-aarch64-prl"
+	@nix $(NIX_FLAGS) eval ".#nixosConfigurations.vm-aarch64-utm.config.system.build.toplevel" --json > /dev/null && echo "  OK: vm-aarch64-utm"
+ifeq ($(UNAME), Darwin)
+	@nix $(NIX_FLAGS) eval ".#darwinConfigurations.macbook.config.system.build.toplevel" --json > /dev/null && echo "  OK: macbook"
+endif
+	@echo ""
+	@echo "=== All checked configurations OK ==="

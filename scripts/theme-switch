@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Switch the active color theme
+# Usage: theme-switch <theme-name>
+# Example: theme-switch catppuccin
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NIXOS_CONFIG="$(dirname "$SCRIPT_DIR")"
+
+THEMES=(
+  tokyo-night catppuccin catppuccin-latte ethereal everforest
+  flexoki-light gruvbox hackerman kanagawa last-horizon lumon
+  matte-black miasma nord osaka-jade retro-82 ristretto
+  rose-pine solitude vantablack white
+)
+
+show_usage() {
+  echo "Usage: theme-switch <theme-name>"
+  echo ""
+  echo "Available themes:"
+  for theme in "${THEMES[@]}"; do
+    echo "  $theme"
+  done
+}
+
+if [[ $# -eq 0 ]]; then
+  show_usage
+  exit 1
+fi
+
+THEME="$1"
+
+# Validate theme exists
+if [[ ! " ${THEMES[@]} " =~ " ${THEME} " ]]; then
+  echo "Error: Unknown theme '$THEME'"
+  echo ""
+  show_usage
+  exit 1
+fi
+
+echo "Switching to theme: $THEME"
+
+# Update the theme in both machine configs
+CONFIG_FILES=(
+  "$NIXOS_CONFIG/machines/beelink-ser8/home.nix"
+  "$NIXOS_CONFIG/machines/surface-book-2/home.nix"
+)
+
+for CONFIG_FILE in "${CONFIG_FILES[@]}"; do
+  if [[ -f "$CONFIG_FILE" ]]; then
+    sed -i "s/theme.active = \".*\";/theme.active = \"$THEME\";/" "$CONFIG_FILE"
+    echo "Updated $CONFIG_FILE"
+  fi
+done
+
+# Rebuild NixOS
+echo ""
+echo "Rebuilding NixOS configuration..."
+cd "$NIXOS_CONFIG"
+sudo nixos-rebuild switch --flake .#
+
+echo ""
+echo "Theme switched to: $THEME"
+echo "You may need to log out and back in for all changes to take effect."

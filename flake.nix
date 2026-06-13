@@ -23,8 +23,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    impermanence.url = "github:nix-community/impermanence";
-
     darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,11 +38,24 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ghostty.url = "github:ghostty-org/ghostty";
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Color schemes for theming
+    nix-colors.url = "github:misterio77/nix-colors";
 
     # Other packages
     nur.url = "github:nix-community/nur";
     zig.url = "github:mitchellh/zig-overlay";
+
+    # Voice dictation
+    voxtype = {
+      url = "github:peteonrails/voxtype/v0.7.5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = {
@@ -57,6 +68,7 @@
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
       inputs.zig.overlays.default
+      inputs.nix-vscode-extensions.overlays.default
 
       (final: prev: rec {
         # gh CLI on stable has bugs.
@@ -68,41 +80,51 @@
       inherit overlays nixpkgs inputs;
     };
   in {
-    nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" rec {
+    # Export lib for external use
+    lib = { inherit mkSystem; };
+
+    # Primary hosts
+    nixosConfigurations.beelink-ser8 = mkSystem "beelink-ser8" {
       system = "x86_64-linux";
       user = "chriswrendev";
     };
 
-    nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" rec {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" rec {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-intel = mkSystem "vm-intel" rec {
+    nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" {
       system = "x86_64-linux";
       user = "chriswrendev";
     };
 
-    nixosConfigurations.wsl = mkSystem "wsl" {
+    nixosConfigurations.thinkpad-wsl = mkSystem "thinkpad-wsl" {
       system = "x86_64-linux";
       user = "chriswrendev";
       wsl = true;
     };
 
-    darwinConfigurations.macbook-pro-m1 = mkSystem "macbook-pro-m1" {
+    darwinConfigurations.macbook = mkSystem "macbook" {
       system = "aarch64-darwin";
       user = "chriswrendev";
       darwin = true;
+    };
+
+    # VMs
+    nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
+      system = "aarch64-linux";
+      user = "chriswrendev";
+    };
+
+    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" {
+      system = "aarch64-linux";
+      user = "chriswrendev";
+    };
+
+    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" {
+      system = "aarch64-linux";
+      user = "chriswrendev";
+    };
+
+    nixosConfigurations.vm-intel = mkSystem "vm-intel" {
+      system = "x86_64-linux";
+      user = "chriswrendev";
     };
   };
 }

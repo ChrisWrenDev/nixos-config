@@ -1,28 +1,10 @@
-{pkgs, ...}: {
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    vimAlias = true;
-    withPython3 = true;
-    withNodeJs = true;
-    extraPackages = with pkgs; [
-      gcc
-      clang
-    ];
+{ config, lib, ... }:
+{
+  options.programs.nvim-custom = {
+    enable = lib.mkEnableOption "Neovim configuration from dotfiles";
   };
 
-  home.file = {
-    ".config/nvim" = {
-      recursive = true;
-      source = "${pkgs.nvim-config}";
-    };
+  config = lib.mkIf config.programs.nvim-custom.enable {
+    xdg.configFile."nvim".source = ../../../nvim;
   };
-
-  home.packages = with pkgs; [
-    neovide 
-    gopls
-    zls
-    lua-language-server
-    typescript-language-server
-  ];
 }

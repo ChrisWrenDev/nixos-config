@@ -2,13 +2,16 @@
   imports = [
     ./hardware.nix
     ../shared
-    ../shared/vm.nix
+    ../../modules/nixos/boot.nix
+    ../../modules/nixos/desktop.nix
   ];
 
   virtualisation.vmware.guest.enable = true;
 
   # Interface is this on Intel Fusion
   networking.interfaces.ens33.useDHCP = true;
+
+  system.stateVersion = "24.11";
 
   # Shared folder to host works on Intel
   fileSystems."/host" = {

@@ -1,13 +1,11 @@
 {
-  isWSL,
-  inputs,
-  ...
-}: {
   config,
   lib,
   pkgs,
   ...
 }: let
+  isWSL = config._module.args.isWSL or false;
+  inputs = config._module.args.inputs or { };
   isDarwin = pkgs.stdenv.isDarwin;
   isLinux = pkgs.stdenv.isLinux;
 
@@ -23,9 +21,11 @@
     ''
   );
 in {
-  # Home-manager 22.11 requires this be set. We never set it so we have
-  # to use the old state version.
-  # home.stateVersion = "18.09";
+  imports = [
+    ../../modules/home-manager/theme
+  ];
+
+  home.stateVersion = "24.11";
 
   # xdg.enable = true;
 
@@ -45,9 +45,9 @@ in {
       pkgs.fzf
       pkgs.gh
       pkgs.htop
+      pkgs.bottom
       pkgs.jq
       pkgs.ripgrep
-      pkgs.sentry-cli
       pkgs.tree
       pkgs.watch
 
@@ -59,11 +59,9 @@ in {
     ++ (lib.optionals isDarwin [
       # This is automatically setup on Linux
       pkgs.cachix
-      pkgs.tailscale
     ])
     ++ (lib.optionals isLinux [
       pkgs.chromium
-      pkgs.firefox
       pkgs.valgrind
       pkgs.zathura
       pkgs.xfce.xfce4-terminal
