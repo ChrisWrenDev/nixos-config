@@ -50,6 +50,12 @@
     nur.url = "github:nix-community/nur";
     zig.url = "github:mitchellh/zig-overlay";
 
+    # Hardware-specific modules (Surface, etc.)
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Voice dictation
     voxtype = {
       url = "github:peteonrails/voxtype/v0.7.5";
