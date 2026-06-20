@@ -97,7 +97,7 @@
   # Common system packages
   environment.systemPackages = with pkgs; [
     inputs.voxtype.packages.${system}.vulkan
-    google-chrome
+    chromium
     killall
     gnupg
     pinentry

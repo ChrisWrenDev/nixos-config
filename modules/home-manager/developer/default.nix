@@ -43,8 +43,6 @@ in
       withPython3 = true;
       withNodeJs = true;
       extraPackages = with pkgs; [
-        gcc
-        clang
         (vimPlugins.nvim-treesitter.withAllGrammars)
       ];
     };
