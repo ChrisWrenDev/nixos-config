@@ -62,7 +62,6 @@
 
       # Languages
       gcc
-      clang
       bun
       nodePackages.pnpm
       nodePackages.yarn

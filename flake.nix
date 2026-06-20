@@ -40,7 +40,6 @@
 
     ghostty = {
       url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Color schemes for theming
@@ -58,8 +57,7 @@
 
     # Voice dictation
     voxtype = {
-      url = "github:peteonrails/voxtype/v0.7.5";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:peteonrails/voxtype/v1.0.0-rc1";
     };
 
   };
