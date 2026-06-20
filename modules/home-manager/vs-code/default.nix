@@ -18,6 +18,7 @@ in
     enable = true;
     package = pkgs.vscodium;
 
+    profiles.default = {
     userSettings = {
       # Visuals
       "window.zoomLevel" = 0.25;
@@ -347,6 +348,7 @@ in
         streetsidesoftware.code-spell-checker
         ziglang.vscode-zig
       ]);
+    };
   };
   };
 }
