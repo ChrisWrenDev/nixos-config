@@ -51,7 +51,7 @@ in
     #-------------------------------------------------------------------
     # Shell functions
     #-------------------------------------------------------------------
-    programs.zsh.initExtra = builtins.readFile ./shell-functions.sh;
+    programs.zsh.initContent = builtins.readFile ./shell-functions.sh;
 
     #-------------------------------------------------------------------
     # Environment variables

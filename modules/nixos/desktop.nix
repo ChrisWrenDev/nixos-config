@@ -29,7 +29,7 @@
   services.printing.enable = true;
 
   # Audio
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -77,6 +77,7 @@
   xdg.portal = {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-hyprland];
+    config.common.default = "*";
   };
 
   # Polkit for privilege escalation UI
@@ -87,7 +88,8 @@
 
   # Fonts
   fonts.packages = with pkgs; [
-    (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
     noto-fonts-emoji
     noto-fonts-extra
     cascadia-code
@@ -128,7 +130,7 @@
     obsidian
     signal-desktop
     typora
-    kdenlive
+    kdePackages.kdenlive
     obs-studio
     evince
     gnome-calculator

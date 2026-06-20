@@ -25,7 +25,7 @@ in
         tf = "terraform";
       };
 
-      initExtra = ''
+      initContent = ''
         setopt AUTOCD
         setopt PROMPT_SUBST
         setopt MENU_COMPLETE

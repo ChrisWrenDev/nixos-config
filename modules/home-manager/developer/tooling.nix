@@ -38,7 +38,7 @@
       xh
       dig
       yq
-      xsv
+      xan
       tldr
       just
       inxi
