@@ -11,13 +11,13 @@
     ../../modules/home-manager/ghostty
     ../../modules/home-manager/wezterm
     ../../modules/home-manager/shell
-    ../../modules/home-manager/hyprland
-    ../../modules/home-manager/waybar
-    ../../modules/home-manager/mako
-    ../../modules/home-manager/hyprlock
-    ../../modules/home-manager/hypridle
-    ../../modules/home-manager/walker
-    ../../modules/home-manager/swayosd
+#    ../../modules/home-manager/hyprland
+#    ../../modules/home-manager/waybar
+#    ../../modules/home-manager/mako
+#    ../../modules/home-manager/hyprlock
+#    ../../modules/home-manager/hypridle
+#    ../../modules/home-manager/walker
+#    ../../modules/home-manager/swayosd
     ../../modules/home-manager/voxtype
     ../../modules/home-manager/git
     ../../modules/home-manager/tmux-custom
@@ -33,12 +33,12 @@
   programs.wezterm-custom.enable = true;
   programs.ghostty-custom.enable = true;
   shell.enable = true;
-  hyprland.enable = true;
-  waybar.enable = true;
-  services.mako-custom.enable = true;
-  services.hypridle-custom.enable = true;
-  programs.swayosd.enable = true;
-  programs.walker.enable = true;
+#  hyprland.enable = true;
+#  waybar.enable = true;
+#  services.mako-custom.enable = true;
+#  services.hypridle-custom.enable = true;
+#  programs.swayosd.enable = true;
+#  programs.walker.enable = true;
   programs.voxtype-custom.enable = true;
   programs.git-custom.enable = true;
   programs.btop-custom.enable = true;
