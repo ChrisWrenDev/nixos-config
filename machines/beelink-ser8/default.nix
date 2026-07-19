@@ -8,7 +8,7 @@
     ./hardware.nix
     ../shared
     ../../modules/nixos/boot.nix
-    ../../modules/nixos/desktop.nix
+  #  ../../modules/nixos/desktop.nix
   ];
 
   networking.hostName = "beelink-ser8";
