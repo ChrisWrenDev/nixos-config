@@ -18,8 +18,10 @@
         # Idle behavior matching Omarchy: screensaver ~2.5min, lock at 5min,
         # display off right after, suspend at 30min.
         {
+          # "Screensaver": blank the display (move/type to wake).
           timeout = 150;
-          on-timeout = "pidof hyprlock || hyprctl dispatch dpms on";
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
         }
         {
           timeout = 300;

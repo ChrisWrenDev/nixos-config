@@ -7,6 +7,7 @@
 {
   imports = [
     ./theme.nix
+    ./gtk.nix
     ./hyprland.nix
     ./waybar.nix
     ./walker.nix
