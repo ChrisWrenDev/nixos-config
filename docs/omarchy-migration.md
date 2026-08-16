@@ -68,6 +68,9 @@ Classification legend:
 - **Shell: zsh.** Omarchy is bash-only, but this user's existing setup is zsh.
   The zsh config ports Omarchy's aliases, functions (`open`, `eff`, `compress`,
   `tdl`, `ga`, `gd`, `fip`/`dip`/`lip`) and environment.
+- **Cursor**: Bibata Modern Classic (24px) for both X11 and Hyprland cursors.
+- **GTK/Qt**: dark GTK (Adwaita-dark base with theme colors via `extraCss`),
+  Qt apps forced through the GTK platform theme (`QT_QPA_PLATFORMTHEME=gtk3`).
 - **Terminal: ghostty + wezterm.** The previous config enabled both; retained
   as-is (Omarchy's default is foot, but the user asked to keep both).
 - **Clipboard**: `wl-clipboard` provides the unified copy/paste; cliphist

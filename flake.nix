@@ -60,7 +60,10 @@
       };
     in
     {
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.writeShellScriptBin "format-nix" ''
+        find . -name '*.nix' -not -path './.git/*' -print0 \
+          | xargs -0 ${nixpkgs.legacyPackages.x86_64-linux.nixfmt}/bin/nixfmt
+      '';
 
       nixosConfigurations = {
         beelink-ser8 = nixpkgs.lib.nixosSystem (mkHost "beelink-ser8" // { system = "x86_64-linux"; });
