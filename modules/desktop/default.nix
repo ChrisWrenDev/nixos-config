@@ -9,10 +9,17 @@
   # owns the per-user Hyprland configuration).
   programs.hyprland.enable = true;
 
-  # Login manager (SDDM in Wayland mode)
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
+  # Login manager (SDDM in Wayland mode). `defaultSession = "hyprland"`
+  # makes SDDM launch the plain `hyprland.desktop` entry (`start-hyprland`
+  # directly). We deliberately do NOT use the `hyprland-uwsm` session: uwsm's
+  # `dbus-launch` fails under SDDM ("Unable to autolaunch a dbus-daemon...")
+  # and the session dies with a black screen + stray cursor.
+  services.displayManager = {
+    sddm = {
+      enable = true;
+      wayland.enable = true;
+    };
+    defaultSession = "hyprland";
   };
 
   services.xserver = {
