@@ -359,8 +359,12 @@ in
     # in "hyprlang" mode so it writes an (unused) hyprland.conf instead of a
     # broken hyprland.lua; our hyprland.lua below is what Hyprland loads,
     # because Hyprland prefers hyprland.lua over hyprland.conf when both exist.
+    #
+    # `settings` holds a single harmless entry purely so HM's "you enabled
+    # systemd but have no settings" warning is silenced. The hyprland.conf HM
+    # writes from it is never loaded (we use hyprland.lua).
     configType = "hyprlang";
-    settings = { };
+    settings.misc.disable_hyprland_logo = true;
   };
 
   # The canonical Hyprland 0.55 Lua config (hyprlang is deprecated in 0.55).
