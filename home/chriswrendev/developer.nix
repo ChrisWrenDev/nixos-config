@@ -48,7 +48,6 @@
     rustup
     gopls
     python312
-    python312Packages.pipx
     poetry
     pyright
     ruff

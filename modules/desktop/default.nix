@@ -67,9 +67,18 @@
   # Fonts
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
-    noto-fonts-emoji
-    noto-fonts-extra
+    nerd-fonts.fira-code
+    noto-fonts-color-emoji
+    noto-fonts
     liberation_ttf
     font-awesome
   ];
+
+  # Match Omarchy's fontconfig aliases: monospace = JetBrains Mono, and a
+  # Liberation fallback for sans/serif.
+  fonts.fontconfig.defaultFonts = {
+    monospace = [ "JetBrainsMono Nerd Font" ];
+    sansSerif = [ "Liberation Sans" ];
+    serif = [ "Liberation Serif" ];
+  };
 }

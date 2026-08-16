@@ -178,8 +178,8 @@ in
         # Clipboard watcher that stores history for walker's clipboard mode
         "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store"
         "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch ${pkgs.cliphist}/bin/cliphist store"
-        # Wallpaper
-        "${pkgs.swaybg}/bin/swaybg -m fill -i $HOME/.config/hypr/wallpaper.png"
+        # Wallpaper (installed by home-manager to ~/.config/hypr/wallpaper.png)
+        "${pkgs.swaybg}/bin/swaybg -m fill -i ${config.home.homeDirectory}/.config/hypr/wallpaper.png"
         # Volume/brightness OSD
         "${pkgs.swayosd}/bin/swayosd-server"
         # Polkit authentication agent
@@ -240,12 +240,6 @@ in
         "${mod} SHIFT, D, exec, ${pkgs.ghostty}/bin/ghostty -e lazydocker"
         "${mod} SHIFT, G, exec, ${pkgs.signal-desktop}/bin/signal-desktop"
         "${mod} SHIFT, O, exec, ${pkgs.obsidian}/bin/obsidian"
-
-        # ── Resize ──
-        "${mod} CTRL, Left, movecurrentworkspacesplit, l"
-        "${mod} CTRL, Right, movecurrentworkspacesplit, r"
-        "${mod} SHIFT, 8, layoutmsg, addmaster"
-        "${mod} SHIFT, 9, layoutmsg, removemaster"
 
         # ── Window management ──
         "${mod}, W, killactive,"
@@ -310,6 +304,19 @@ in
         "${mod} SHIFT ALT, Up, moveworkspacetomonitor, u"
         "${mod} SHIFT ALT, Down, moveworkspacetomonitor, d"
 
+        # ── Group navigation (as in Omarchy) ──
+        "${mod} ALT, Tab, changegroupactive, 1"
+        "${mod} ALT SHIFT, Tab, changegroupactive, -1"
+        "${mod} CTRL, Left, changegroupactive, -1"
+        "${mod} CTRL, Right, changegroupactive, 1"
+        "${mod}, G, togglegroup,"
+        "${mod} ALT, G, movewindoworgroup,"
+
+        # ── Universal clipboard (copy/paste/cut in any app incl. terminal) ──
+        "${mod}, C, sendshortcut, CTRL, Insert,"
+        "${mod}, V, sendshortcut, SHIFT, Insert,"
+        "${mod}, X, sendshortcut, CTRL, X,"
+
         # ── Screenshots ──
         ", Print, exec, ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy"
         "${mod}, Print, exec, ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy"
@@ -337,9 +344,9 @@ in
         "${mod} SHIFT ALT, Comma, exec, ${pkgs.mako}/bin/makoctl restore"
 
         # ── Toggles ──
-        "${mod} CTRL, I, exec, ${pkgs.hypridle}/bin/hypridle"
-        "${mod} CTRL, N, exec, ${pkgs.hyprsunset}/bin/hyprsunset -t 4000"
-        "${mod} CTRL, T, exec, ${pkgs.btop}/bin/btop"
+        "${mod} CTRL, I, exec, pgrep -x hypridle >/dev/null && pkill hypridle || ${pkgs.hypridle}/bin/hypridle"
+        "${mod} CTRL, N, exec, pgrep -x hyprsunset >/dev/null && pkill hyprsunset || ${pkgs.hyprsunset}/bin/hyprsunset -t 4000"
+        "${mod} CTRL, T, exec, ${pkgs.ghostty}/bin/ghostty -e btop"
 
         # ── Media (with SwayOSD feedback) ──
         ", XF86AudioRaiseVolume, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume raise"
@@ -357,10 +364,7 @@ in
         ", XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
         ", XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next"
         ", XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous"
-      ]
-      # ── Quick app bindings (matching Omarchy's application key layer) ──
-      ++ (map (s: "${mod} SHIFT, ${s}, exec, ${pkgs.ghostty}/bin/ghostty -e nvim .") [ ])
-      ++ [ ];
+      ];
     };
   };
 
