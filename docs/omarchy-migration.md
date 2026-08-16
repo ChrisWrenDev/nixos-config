@@ -20,7 +20,7 @@ Classification legend:
 
 | Component | Omarchy implementation | Desired behaviour | NixOS/Home Manager implementation | Status |
 | --- | --- | --- | --- | --- |
-| Hyprland config | Lua (`default/hypr/*.lua`) + `config/hypr/*.lua` | Tiling WM with dwindle layout | `home/chriswrendev/hyprland.nix` (`wayland.windowManager.hyprland.settings`) | KEEP |
+| Hyprland config | Lua (`default/hypr/*.lua`) + `config/hypr/*.lua` | Tiling WM with dwindle layout | `home/chriswrendev/hyprland.nix` (self-authored 0.55 Lua via `xdg.configFile`) | KEEP |
 | Keybindings | `default/hypr/bindings/*.lua` (Lua helpers) | Same shortcuts | `home/chriswrendev/hyprland.nix` `bind` list | REIMPLEMENT |
 | Session start | Quickshell (bar + menu + notifications all in one process) | Waybar/mako/walker at login | Hyprland `exec-once` in `home/chriswrendev/hyprland.nix` | REPLACE |
 | Top bar | Quickshell bar (`shell/plugins/bar`) | Status bar, workspace indicators, tray, audio/network | Waybar (`home/chriswrendev/waybar.nix`) | REPLACE |
@@ -68,6 +68,14 @@ Classification legend:
 - **Shell: zsh.** Omarchy is bash-only, but this user's existing setup is zsh.
   The zsh config ports Omarchy's aliases, functions (`open`, `eff`, `compress`,
   `tdl`, `ga`, `gd`, `fip`/`dip`/`lip`) and environment.
+- **Hyprland 0.55 config**: hyprlang is deprecated in 0.55 (wiki), and Home
+  Manager 26.05's Lua translator emits **invalid Lua** (`hl.exec-once`,
+  `hl.bezier`, `hl.windowrulev2` — hyphenated names), which aborted Hyprland at
+  startup (blank screen). The config in `home/chriswrendev/hyprland.nix` is
+  therefore authored directly against the canonical 0.55 `hl.*` API
+  (`hl.config`, `hl.env`, `hl.curve`, `hl.animation`, `hl.exec_cmd`,
+  `hl.window_rule`, `hl.dsp.*`) and validated with `hyprland --verify-config`.
+  This matches what current Omarchy itself does (its `default/hypr/*.lua`).
 - **Cursor**: Bibata Modern Classic (24px) for both X11 and Hyprland cursors.
 - **GTK/Qt**: dark GTK (Adwaita-dark base with theme colors via `extraCss`),
   Qt apps forced through the GTK platform theme (`QT_QPA_PLATFORMTHEME=gtk3`).
