@@ -98,6 +98,29 @@ Classification legend:
 6. **Surface Book 2** — see the separate architecture notes; purely a new
    `hosts/surface-book-2/` directory.
 
+## Surface Book 2 readiness
+
+The configuration is structured so a second host is a pure addition:
+
+- `flake.nix` builds hosts via `mkHost "beelink-ser8"`; adding
+  `surface-book-2` is one more entry picking `hosts/surface-book-2`.
+- All home-manager desktop configuration lives in `home/chriswrendev/` and is
+  imported by the flake for *every* host, so the desktop is ~100% shared.
+- Host-specific concerns are kept out of the shared desktop:
+  `hosts/beelink-ser8/hardware-configuration.nix` (UUIDs) and
+  `modules/desktop/*` (session, Wayland backend) are the only SER8-specific
+  bits; the shared Hyprland config contains no monitor/workspace assumptions.
+- To add Surface Book 2 later you would:
+  1. Add a `hosts/surface-book-2/{default.nix,hardware-configuration.nix}`.
+  2. Enable `nixos-hardware`'s `microsoft/surface-book-2` profile (or a custom
+     Surface kernel) in that host.
+  3. Set per-host monitor/scale overrides in the host file (not in shared
+     `home/chriswrendev/hyprland.nix`).
+  4. Add any hybrid-GPU/NVIDIA/suspend specifics to the host or a
+     `modules/hardware/surface.nix`.
+
+No restructuring is required to support it.
+
 ## Credential notes
 
 The previous `machines/shared` config contained a committed password hash and
