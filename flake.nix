@@ -1,134 +1,69 @@
 {
-  description = "ChrisWrenDev NixOS Configuration";
+  description = "NixOS + Home Manager configuration for the Beelink SER8, recreating the Omarchy desktop with native tools";
 
   inputs = {
-    # Pin our primary nixpkgs repository. This is the main nixpkgs repository
-    # we'll use for our configurations. Be very careful changing this because
-    # it'll impact your entire system.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-
-    # We use the unstable nixpkgs repo for some packages.
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-
-    # Build a custom WSL installer
-    nixos-wsl.url = "github:nix-community/NixOS-WSL";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
-
-    # snapd
-    nix-snapd.url = "github:nix-community/nix-snapd";
-    nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
+    # Primary nixpkgs. 26.05 is the current stable and matches the base of the
+    # freshly installed machine.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-vscode-extensions = {
-      url = "github:nix-community/nix-vscode-extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    wezterm = {
-      url = "github:wez/wezterm/main?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-    };
-
-    # Color schemes for theming
-    nix-colors.url = "github:misterio77/nix-colors";
-
-    # Other packages
-    nur.url = "github:nix-community/nur";
-    zig.url = "github:mitchellh/zig-overlay";
-
-    # Hardware-specific modules (Surface, etc.)
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Voice dictation
-    voxtype = {
-      url = "github:peteonrails/voxtype/v1.0.0-rc1";
-    };
-
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    darwin,
-    ...
-  } @ inputs: let
-    # Overlays is the list of overlays we want to apply from flake inputs.
-    overlays = [
-      inputs.zig.overlays.default
-      inputs.nix-vscode-extensions.overlays.default
-
-      (final: prev: rec {
-        # gh CLI on stable has bugs.
-        gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
-      })
-    ];
-
-    mkSystem = import ./lib/mksystem.nix {
-      inherit overlays nixpkgs inputs;
-    };
-  in {
-    # Export lib for external use
-    lib = { inherit mkSystem; };
-
-    # Primary hosts
-    nixosConfigurations.beelink-ser8 = mkSystem "beelink-ser8" {
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
+    let
       system = "x86_64-linux";
       user = "chriswrendev";
-    };
 
-    nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-    };
+      # Where host-specific modules live so a future host (e.g. surface-book-2)
+      # only needs a directory here to be added.
+      mkHost = host: {
+        modules = [
+          ./hosts/${host}
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              extraSpecialArgs = {
+                inherit
+                  self
+                  nixpkgs
+                  home-manager
+                  host
+                  user
+                  inputs
+                  ;
+              };
+              users.${user} = import ./home/${user};
+            };
+          }
+        ];
+        specialArgs = {
+          inherit
+            self
+            nixpkgs
+            home-manager
+            user
+            inputs
+            ;
+        };
+      };
+    in
+    {
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;
 
-    nixosConfigurations.thinkpad-wsl = mkSystem "thinkpad-wsl" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-      wsl = true;
+      nixosConfigurations = {
+        beelink-ser8 = nixpkgs.lib.nixosSystem (mkHost "beelink-ser8" // { system = "x86_64-linux"; });
+      };
     };
-
-    darwinConfigurations.macbook = mkSystem "macbook" {
-      system = "aarch64-darwin";
-      user = "chriswrendev";
-      darwin = true;
-    };
-
-    # VMs
-    nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-intel = mkSystem "vm-intel" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-    };
-  };
 }
