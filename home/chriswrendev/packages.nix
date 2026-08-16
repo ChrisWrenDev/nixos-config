@@ -3,10 +3,12 @@
   lib,
   pkgs,
   ...
-}:
-{
-  # Core packages. Most desktop/CLI software lives here (Home Manager owns the
-  # user experience); system-level services are handled by NixOS modules.
+}: {
+  # Core desktop & CLI packages. System-level services (PipeWire, Wayland,
+  # Bluetooth, portals) are handled by NixOS modules; user-facing apps live here.
+  #
+  # Note: git/tmux/curl/wget and dev tooling are declared in
+  # `home/chriswrendev/developer.nix` to avoid duplication.
   home.packages = with pkgs; [
     # Shell / CLI conveniences (Omarchy default set)
     bat
@@ -23,12 +25,6 @@
     watch
     nodejs
     zoxide
-
-    # Core CLI tools
-    curl
-    wget
-    git
-    tmux
 
     # Hyprland ecosystem
     grim
@@ -48,10 +44,6 @@
     networkmanagerapplet
     blueman
 
-    # Audio
-    pipewire
-    wireplumber
-
     # Desktop apps (Omarchy default applications)
     chromium
     nautilus
@@ -60,10 +52,8 @@
     mpv
     gnome-calculator
     gnome-disk-utility
-    # Editors
     obsidian
     signal-desktop
-    # Image editing
     gimp
   ];
 
@@ -79,18 +69,18 @@
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "x-scheme-handler/http" = [ "chromium.desktop" ];
-      "x-scheme-handler/https" = [ "chromium.desktop" ];
-      "text/html" = [ "chromium.desktop" ];
-      "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
-      "image/png" = [ "imv.desktop" ];
-      "image/jpeg" = [ "imv.desktop" ];
-      "application/pdf" = [ "org.gnome.Evince.desktop" ];
-      "video/*" = [ "mpv.desktop" ];
-      "audio/*" = [ "mpv.desktop" ];
-      "application/json" = [ "nvim.desktop" ];
-      "text/x-shellscript" = [ "nvim.desktop" ];
-      "text/plain" = [ "nvim.desktop" ];
+      "x-scheme-handler/http" = ["chromium.desktop"];
+      "x-scheme-handler/https" = ["chromium.desktop"];
+      "text/html" = ["chromium.desktop"];
+      "inode/directory" = ["org.gnome.Nautilus.desktop"];
+      "image/png" = ["imv.desktop"];
+      "image/jpeg" = ["imv.desktop"];
+      "application/pdf" = ["org.gnome.Evince.desktop"];
+      "video/*" = ["mpv.desktop"];
+      "audio/*" = ["mpv.desktop"];
+      "application/json" = ["nvim.desktop"];
+      "text/x-shellscript" = ["nvim.desktop"];
+      "text/plain" = ["nvim.desktop"];
     };
   };
 }
