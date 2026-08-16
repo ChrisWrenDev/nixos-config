@@ -9,11 +9,29 @@
   # owns the per-user Hyprland configuration).
   programs.hyprland.enable = true;
 
-  # Login manager (SDDM in Wayland mode). `defaultSession = "hyprland"`
-  # makes SDDM launch the plain `hyprland.desktop` entry (`start-hyprland`
-  # directly). We deliberately do NOT use the `hyprland-uwsm` session: uwsm's
-  # `dbus-launch` fails under SDDM ("Unable to autolaunch a dbus-daemon...")
-  # and the session dies with a black screen + stray cursor.
+  # Only the plain (non-uwsm) Hyprland session is offered to SDDM, and it is
+  # the default. We deliberately run through the plain `hyprland.desktop`
+  # entry (`start-hyprland` directly) instead of the `hyprland-uwsm` session:
+  # uwsm's `dbus-launch` fails under SDDM ("Unable to autolaunch a
+  # dbus-daemon..."), killing the session into a black screen with a stray
+  # cursor.
+  #
+  # SDDM lists every *.desktop under share/wayland-sessions, and the bare
+  # Hyprland package ships both `hyprland.desktop` and `hyprland-uwsm.desktop`.
+  # `lib.mkForce` overrides `programs.hyprland`'s own
+  # `sessionPackages = [ hyprland-package ]` (which includes hyprland-uwsm).
+  services.displayManager.sessionPackages = lib.mkForce [
+    (pkgs.runCommand "hyprland-session-only"
+      {
+        providedSessions = [ "hyprland" ];
+      }
+      ''
+        mkdir -p $out/share/wayland-sessions
+        ln -sf ${config.programs.hyprland.package}/share/wayland-sessions/hyprland.desktop $out/share/wayland-sessions/hyprland.desktop
+      ''
+    )
+  ];
+
   services.displayManager = {
     sddm = {
       enable = true;
