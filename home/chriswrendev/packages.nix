@@ -33,7 +33,6 @@
     hyprpicker
     swaybg
     wl-clipboard
-    cliphist
     wlogout
     hyprsunset
 

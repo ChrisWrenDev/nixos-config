@@ -6,155 +6,8 @@
 }:
 let
   theme = config.theme.colorsHex;
-in
-{
-  # Walker application launcher (used for both the launcher and clipboard
-  # history via `walker -m clipboard`).
-  xdg.configFile."walker/config.json".text = builtins.toJSON {
-    appearance = {
-      width = 644;
-      height = 300;
-      maxheight = 300;
-      placeholder = "Search...";
-    };
-    font = {
-      family = "JetBrainsMono Nerd Font";
-      size = 18;
-    };
-    behavior = {
-      show_initially = false;
-      sort_by_usage = true;
-      hide_if_single = true;
-      term = "ghostty";
-      force_keyboard_focus = true;
-      selection_wrap = true;
-      hide_action_hints = true;
-    };
-    providers = [
-      "desktopapplications"
-      "clipboard"
-    ];
-    prefixes = [
-      {
-        prefix = "/";
-        provider = "providerlist";
-      }
-      {
-        prefix = ".";
-        provider = "files";
-      }
-      {
-        prefix = ":";
-        provider = "symbols";
-      }
-      {
-        prefix = "=";
-        provider = "calc";
-      }
-      {
-        prefix = "@";
-        provider = "websearch";
-      }
-      {
-        prefix = "$";
-        provider = "clipboard";
-      }
-      {
-        prefix = ";";
-        provider = "runner";
-      }
-    ];
-    placeholders = {
-      default = {
-        input = " Search...";
-        list = "No Results";
-      };
-    };
-  };
 
-  # Walker theme CSS
-  xdg.configFile."walker/themes/default/style.css".text = ''
-    * {
-      all: unset;
-    }
-
-    * {
-      font-family: "JetBrainsMono Nerd Font";
-      font-size: 18px;
-      color: #${theme.foreground};
-    }
-
-    scrollbar {
-      opacity: 0;
-    }
-
-    .normal-icons {
-      -gtk-icon-size: 16px;
-    }
-
-    .large-icons {
-      -gtk-icon-size: 32px;
-    }
-
-    .box-wrapper {
-      background: alpha(#${theme.background}, 0.95);
-      padding: 20px;
-      border: 2px solid #${theme.accent};
-    }
-
-    .search-container {
-      background: #${theme.background};
-      padding: 10px;
-    }
-
-    .input placeholder {
-      opacity: 0.5;
-    }
-
-    .input:focus,
-    .input:active {
-      box-shadow: none;
-      outline: none;
-    }
-
-    child:selected .item-box * {
-      color: #${theme.background};
-    }
-
-    child:selected {
-      background: alpha(#${theme.foreground}, 0.07);
-    }
-
-    .item-box {
-      padding-left: 14px;
-    }
-
-    .item-text-box {
-      all: unset;
-      padding: 14px 0;
-    }
-
-    .item-subtext {
-      font-size: 0px;
-      min-height: 0px;
-      margin: 0px;
-      padding: 0px;
-    }
-
-    .item-image {
-      margin-right: 14px;
-      -gtk-icon-transform: scale(0.9);
-    }
-
-    .keybind-hints {
-      background: #${theme.color0};
-      padding: 10px;
-      margin-top: 10px;
-    }
-  '';
-
-  # Walker layout XML
-  xdg.configFile."walker/themes/default/layout.xml".text = ''
+  layoutXml = ''
     <?xml version="1.0" encoding="UTF-8"?>
     <interface>
       <requires lib="gtk" version="4.0"></requires>
@@ -302,4 +155,171 @@ in
       </object>
     </interface>
   '';
+in
+{
+  # Elephant provides the clipboard history back-end that Walker's clipboard
+  # mode reads (walker 2.x + elephant replaces the old cliphist/wl-paste setup).
+  services.elephant = {
+    enable = true;
+    settings = {
+      providers.prefixes = [
+        {
+          prefix = "$";
+          provider = "clipboard";
+        }
+        {
+          prefix = ";";
+          provider = "runner";
+        }
+      ];
+    };
+  };
+
+  # Walker application launcher (used for both the launcher and clipboard
+  # history via `walker -m clipboard`). Configured as a systemd user service so
+  # the clipboard provider is available.
+  services.walker = {
+    enable = true;
+    systemd.enable = true;
+    enableElephantIntegration = true;
+
+    settings = {
+      force_keyboard_focus = true;
+      selection_wrap = true;
+      hide_action_hints = true;
+      theme = "nixos";
+      term = "ghostty";
+
+      placeholders = {
+        default = {
+          input = " Search...";
+          list = "No Results";
+        };
+      };
+
+      providers = {
+        default = [
+          "desktopapplications"
+          "clipboard"
+        ];
+        empty = [ "desktopapplications" ];
+        prefixes = [
+          {
+            prefix = "/";
+            provider = "providerlist";
+          }
+          {
+            prefix = ".";
+            provider = "files";
+          }
+          {
+            prefix = ":";
+            provider = "symbols";
+          }
+          {
+            prefix = "=";
+            provider = "calc";
+          }
+          {
+            prefix = "@";
+            provider = "websearch";
+          }
+          {
+            prefix = "$";
+            provider = "clipboard";
+          }
+          {
+            prefix = ";";
+            provider = "runner";
+          }
+        ];
+      };
+    };
+
+    theme = {
+      name = "nixos";
+      style = ''
+        * {
+          all: unset;
+        }
+
+        * {
+          font-family: "JetBrainsMono Nerd Font";
+          font-size: 18px;
+          color: #${theme.foreground};
+        }
+
+        scrollbar {
+          opacity: 0;
+        }
+
+        .normal-icons {
+          -gtk-icon-size: 16px;
+        }
+
+        .large-icons {
+          -gtk-icon-size: 32px;
+        }
+
+        .box-wrapper {
+          background: alpha(#${theme.background}, 0.95);
+          padding: 20px;
+          border: 2px solid #${theme.accent};
+        }
+
+        .search-container {
+          background: #${theme.background};
+          padding: 10px;
+        }
+
+        .input placeholder {
+          opacity: 0.5;
+        }
+
+        .input:focus,
+        .input:active {
+          box-shadow: none;
+          outline: none;
+        }
+
+        child:selected .item-box * {
+          color: #${theme.background};
+        }
+
+        child:selected {
+          background: alpha(#${theme.foreground}, 0.07);
+        }
+
+        .item-box {
+          padding-left: 14px;
+        }
+
+        .item-text-box {
+          all: unset;
+          padding: 14px 0;
+        }
+
+        .item-subtext {
+          font-size: 0px;
+          min-height: 0px;
+          margin: 0px;
+          padding: 0px;
+        }
+
+        .item-image {
+          margin-right: 14px;
+          -gtk-icon-transform: scale(0.9);
+        }
+
+        .keybind-hints {
+          background: #${theme.color0};
+          padding: 10px;
+          margin-top: 10px;
+        }
+      '';
+      layout = {
+        "layout" = layoutXml;
+      };
+    };
+  };
 }

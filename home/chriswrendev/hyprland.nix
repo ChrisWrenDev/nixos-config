@@ -173,11 +173,6 @@ in
         "${pkgs.mako}/bin/mako"
         # Status bar
         "${pkgs.waybar}/bin/waybar"
-        # Launcher service (needed for the clipboard history provider)
-        "${pkgs.walker}/bin/walker --gapplication-service"
-        # Clipboard watcher that stores history for walker's clipboard mode
-        "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store"
-        "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch ${pkgs.cliphist}/bin/cliphist store"
         # Wallpaper (installed by home-manager to ~/.config/hypr/wallpaper.png)
         "${pkgs.swaybg}/bin/swaybg -m fill -i ${config.home.homeDirectory}/.config/hypr/wallpaper.png"
         # Volume/brightness OSD
