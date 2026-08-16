@@ -73,8 +73,10 @@ Classification legend:
   Qt apps forced through the GTK platform theme (`QT_QPA_PLATFORMTHEME=gtk3`).
 - **Terminal: ghostty + wezterm.** The previous config enabled both; retained
   as-is (Omarchy's default is foot, but the user asked to keep both).
-- **Clipboard**: `wl-clipboard` provides the unified copy/paste; cliphist
-  stores history for Walker's `clipboard` provider (`SUPER CTRL, V`).
+- **Clipboard**: `wl-clipboard` provides the unified copy/paste
+  (`SUPER C/X/V`); clipboard history (`SUPER CTRL, V`) uses Walker 2.x +
+  **elephant** (its `clipboard` provider replaces the older cliphist approach,
+  which has been dropped to keep one clipboard backend).
 - **Power menu**: `SUPER, Escape` opens Wlogout (suspend/reboot/shutdown/logout).
 - **Idle** follows Omarchy: screensaver ~2.5 min, lock ~5 min, display off,
   suspend at 30 min.
