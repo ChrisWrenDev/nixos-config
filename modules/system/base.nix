@@ -67,7 +67,6 @@
       "networking"
       "wheel"
       "docker"
-      "lxd"
     ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
