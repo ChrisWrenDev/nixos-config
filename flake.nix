@@ -1,134 +1,106 @@
 {
-  description = "ChrisWrenDev NixOS Configuration";
+  # https://github.com/anotherhadi/nixy
+  description = ''
+    Nixy simplifies and unifies the Hyprland ecosystem with a modular, easily customizable setup.
+    It provides a structured way to manage your system configuration and dotfiles with minimal effort.
+  '';
 
   inputs = {
-    # Pin our primary nixpkgs repository. This is the main nixpkgs repository
-    # we'll use for our configurations. Be very careful changing this because
-    # it'll impact your entire system.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-
-    # We use the unstable nixpkgs repo for some packages.
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-
-    # Build a custom WSL installer
-    nixos-wsl.url = "github:nix-community/NixOS-WSL";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
-
-    # snapd
-    nix-snapd.url = "github:nix-community/nix-snapd";
-    nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
-
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nvf.url = "github:notashelf/nvf";
+    nvf-config = {
+      url = "path:./home/programs/tui/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nvf.follows = "nvf";
+    };
+    nur = {
+      url = "github:nix-community/nur";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    stylix = {
+      url = "github:nix-community/stylix/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    impermanence.url = "github:nix-community/impermanence";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    helium-browser = {
+      url = "github:oxcl/nix-flake-helium-browser";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-vscode-extensions = {
-      url = "github:nix-community/nix-vscode-extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    wezterm = {
-      url = "github:wez/wezterm/main?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-    };
-
-    # Color schemes for theming
-    nix-colors.url = "github:misterio77/nix-colors";
-
-    # Other packages
-    nur.url = "github:nix-community/nur";
-    zig.url = "github:mitchellh/zig-overlay";
-
-    # Hardware-specific modules (Surface, etc.)
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Voice dictation
-    voxtype = {
-      url = "github:peteonrails/voxtype/v1.0.0-rc1";
-    };
-
+    # Server
+    nixarr.url = "github:nix-media-server/nixarr";
+    default-creds.url = "github:anotherhadi/default-creds";
+    blog.url = "github:anotherhadi/blog";
   };
 
-  outputs = {
-    self,
+  outputs = inputs @ {
     nixpkgs,
-    home-manager,
-    darwin,
+    nixpkgs-unstable,
+    git-hooks,
     ...
-  } @ inputs: let
-    # Overlays is the list of overlays we want to apply from flake inputs.
-    overlays = [
-      inputs.zig.overlays.default
-      inputs.nix-vscode-extensions.overlays.default
+  }: let
+    system = "x86_64-linux";
+    pkgs-unstable = import nixpkgs-unstable {
+      inherit system;
+      config.allowUnfree = true;
+    };
+    pkgs = nixpkgs.legacyPackages.${system};
+    args = {
+      inherit
+        inputs
+        nixpkgs
+        system
+        pkgs-unstable
+        pkgs
+        ;
+    };
+    merge = nixpkgs.lib.foldl nixpkgs.lib.recursiveUpdate {};
+    supportedSystems = ["x86_64-linux" "aarch64-linux"];
 
-      (final: prev: rec {
-        # gh CLI on stable has bugs.
-        gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
-      })
+    forAllSystems = f:
+      nixpkgs.lib.genAttrs supportedSystems
+      (system: f system (import nixpkgs {inherit system;}));
+  in
+    merge [
+      (import ./home/programs/tui/nixy/flake.nix args)
+      {
+        formatter.${system} = pkgs.alejandra;
+        packages.${system}.nvim = inputs.nvf-config.packages.${system}.nvim;
+        apps.${system}.nvim = inputs.nvf-config.apps.${system}.nvim;
+        nixosConfigurations = {
+          h-laptop = import ./hosts/laptop/flake.nix args;
+          h-work = import ./hosts/work/flake.nix args;
+          jack = import ./hosts/server/flake.nix args;
+          desktop = import ./hosts/desktop/flake.nix args;
+        };
+        devShells = forAllSystems (system: pkgs: {
+          default = import ./shell.nix {
+            inherit pkgs;
+            gitHooksLib = git-hooks.lib.${system};
+          };
+        });
+      }
     ];
-
-    mkSystem = import ./lib/mksystem.nix {
-      inherit overlays nixpkgs inputs;
-    };
-  in {
-    # Export lib for external use
-    lib = { inherit mkSystem; };
-
-    # Primary hosts
-    nixosConfigurations.beelink-ser8 = mkSystem "beelink-ser8" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.surface-book-2 = mkSystem "surface-book-2" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.thinkpad-wsl = mkSystem "thinkpad-wsl" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-      wsl = true;
-    };
-
-    darwinConfigurations.macbook = mkSystem "macbook" {
-      system = "aarch64-darwin";
-      user = "chriswrendev";
-      darwin = true;
-    };
-
-    # VMs
-    nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" {
-      system = "aarch64-linux";
-      user = "chriswrendev";
-    };
-
-    nixosConfigurations.vm-intel = mkSystem "vm-intel" {
-      system = "x86_64-linux";
-      user = "chriswrendev";
-    };
-  };
 }
