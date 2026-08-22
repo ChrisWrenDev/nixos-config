@@ -15,23 +15,15 @@ in {
             apiKey = "{file:${secretsDir}/zen-api-key}";
           };
         };
-        openai = {
-          npm = "@ai-sdk/openai";
-          name = "OpenAI";
-          options = {
-            apiKey = "{file:${secretsDir}/openai-api-key}";
-          };
-        };
         ollama = {
           npm = "@ai-sdk/openai-compatible";
-          name = "Ollama (local)";
+          name = "Ollama";
           options = {
             baseURL = "http://localhost:11434/v1";
           };
           models = {
-            "llama3.1" = {name = "Llama 3.1";};
-            "qwen2.5-coder" = {name = "Qwen 2.5 Coder";};
-            "codellama" = {name = "Code Llama";};
+            "qwen3.8:27b" = {name = "Qwen 3.8";};
+            "qwen3.6:35b-a3b" = {name = "Qwen 3.6";};
           };
         };
       };

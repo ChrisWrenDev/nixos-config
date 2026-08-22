@@ -1,5 +1,5 @@
 keys:
-  - &primary age12yvtj49pfh3fqzqflscm0ek4yzrjhr6cqhn7x89gdxnlykq0xudq5c7334
+  - &primary age1lc2zjh074mnsyj5agythhyqth2xuj65jyu8hehczrm9z6tmykgfqae38ah
   - &work age1c8pawdsxptfslgrz2c56s39mrtnjzc5mm3hfzgr2wdwu2v6vfsdsupjsq6
 creation_rules:
   - path_regex: hosts/desktop/secrets/secrets.yaml$

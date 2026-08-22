@@ -16,11 +16,6 @@ in {
         mode = "0600";
         path = "${home}/.config/opencode/secrets/zen-api-key";
       };
-      openai-api-key = {
-        owner = username;
-        mode = "0600";
-        path = "${home}/.config/opencode/secrets/openai-api-key";
-      };
     };
   };
 
