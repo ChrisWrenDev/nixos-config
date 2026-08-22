@@ -77,6 +77,10 @@
     stateVersion = "26.05";
   };
 
+  wayland.windowManager.hyprland.settings.monitor = [
+    "DP-2,highres,auto,1.5"
+  ];
+
   programs = {
     home-manager.enable = true;
     nixy = {

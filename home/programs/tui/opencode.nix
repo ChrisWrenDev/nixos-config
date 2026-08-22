@@ -4,7 +4,7 @@ in {
   programs.opencode = {
     enable = true;
     settings = {
-      model = "anthropic/claude-sonnet-4-20250514";
+      model = "ollama/qwen3.6:35b-a3b";
 
       provider = {
         zen = {
@@ -22,8 +22,14 @@ in {
             baseURL = "http://localhost:11434/v1";
           };
           models = {
-            "qwen3.8:27b" = {name = "Qwen 3.8";};
-            "qwen3.6:35b-a3b" = {name = "Qwen 3.6";};
+            "qwen3.8:27b" = {
+              name = "Qwen 3.8";
+              options = {reasoningEffort = "none";};
+            };
+            "qwen3.6:35b-a3b" = {
+              name = "Qwen 3.6";
+              options = {reasoningEffort = "none";};
+            };
           };
         };
       };
